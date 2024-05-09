@@ -1,3 +1,24 @@
 steps:
+  # Step 1: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'my-image', '-f', 'Dockerfile', '.']
+    args: ['build', '-t', 'gcr.io/Yfitmi-417714/my-flask-sd-app', '.']
+
+  # Step 2: Push the Docker image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/fitmi-417714/my-flask-sd-app']
+
+  # Step 3: Deploy to Google Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'my-flask-sd-app'
+      - '--image'
+      - 'gcr.io/fitmi-417714/my-flask-sd-app'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - 'us-central1'
+      - '--allow-unauthenticated'  # Optional: Allow public access
+
+timeout: 900  # 15 minutes timeout for the build process
